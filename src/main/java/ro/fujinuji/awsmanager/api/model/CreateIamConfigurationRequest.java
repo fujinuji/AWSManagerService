@@ -8,5 +8,5 @@ import lombok.Setter;
 public class CreateIamConfigurationRequest {
     private String userId;
     private String iamKeyId;
-    private String iamAccessKey;
+    private String iamSecretKey;
 }

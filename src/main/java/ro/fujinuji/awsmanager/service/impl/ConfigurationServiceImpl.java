@@ -17,12 +17,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void saveIamConfiguration(UserIamConfiguration iamConfiguration) {
+    public void saveIamConfiguration(UserIamConfiguration iamConfiguration) throws AWSManagerException {
+        UserIamConfiguration userIamConfiguration = iamConfigurationRepository.getByUserId(iamConfiguration.getUser().getInternalUserId()).orElseThrow(ConfigurationNotFoundException::new);
+        iamConfiguration.setConfigurationId(userIamConfiguration.getConfigurationId());
+
         iamConfigurationRepository.save(iamConfiguration);
     }
 
     @Override
-    public UserIamConfiguration getConfigurationByUser(String userId) throws AWSManagerException {
+    public UserIamConfiguration getConfigurationByAmazonUser(String userId) throws AWSManagerException {
         return iamConfigurationRepository.getByAmazonUserId(userId).orElseThrow(ConfigurationNotFoundException::new);
+    }
+
+    @Override
+    public UserIamConfiguration getConfigurationByUser(String userId) throws AWSManagerException {
+        return iamConfigurationRepository.getByUserId(userId).orElseThrow(ConfigurationNotFoundException::new);
     }
 }

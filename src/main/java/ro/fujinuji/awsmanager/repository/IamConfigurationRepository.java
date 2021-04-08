@@ -12,4 +12,7 @@ public interface IamConfigurationRepository extends JpaRepository<UserIamConfigu
 
     @Query("FROM iam_configuration ic WHERE ic.user.amazonUserId=?1")
     Optional<UserIamConfiguration> getByAmazonUserId(String amazonUserIq);
+
+    @Query("FROM iam_configuration ic WHERE ic.user.internalUserId=?1")
+    Optional<UserIamConfiguration> getByUserId(String userId);
 }

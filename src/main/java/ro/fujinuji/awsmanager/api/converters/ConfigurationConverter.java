@@ -9,7 +9,7 @@ public class ConfigurationConverter {
     public static UserIamConfiguration iamFromUi(CreateIamConfigurationRequest createIamConfigurationRequest) {
         UserIamConfiguration userIamConfiguration = new UserIamConfiguration();
         userIamConfiguration.setIamKeyId(createIamConfigurationRequest.getIamKeyId());
-        userIamConfiguration.setIamSecretKey(createIamConfigurationRequest.getIamAccessKey());
+        userIamConfiguration.setIamSecretKey(createIamConfigurationRequest.getIamSecretKey());
 
         User user = new User();
         user.setInternalUserId(createIamConfigurationRequest.getUserId());

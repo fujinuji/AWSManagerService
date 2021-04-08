@@ -21,14 +21,19 @@ public class ConfigurationController {
     }
 
     @PostMapping(path = "/iam", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void saveIamConfiguration(@Valid @RequestBody CreateIamConfigurationRequest createIamConfigurationRequest) {
+    public void saveIamConfiguration(@Valid @RequestBody CreateIamConfigurationRequest createIamConfigurationRequest) throws AWSManagerException {
         UserIamConfiguration iamConfiguration = ConfigurationConverter.iamFromUi(createIamConfigurationRequest);
 
         configurationService.saveIamConfiguration(iamConfiguration);
     }
 
-    @GetMapping("/iam/{amazonUserId}")
-    public UserIamConfiguration getConfigurationForUser(@PathVariable("amazonUserId") String amazonUserId) throws AWSManagerException {
-        return configurationService.getConfigurationByUser(amazonUserId);
+    @GetMapping("/iam/amazon/{amazonUserId}")
+    public UserIamConfiguration getConfigurationForUserWithAmazonId(@PathVariable("amazonUserId") String amazonUserId) throws AWSManagerException {
+        return configurationService.getConfigurationByAmazonUser(amazonUserId);
+    }
+
+    @GetMapping("/iam/{userId}")
+    public UserIamConfiguration getConfigurationForUser(@PathVariable("userId") String userId) throws AWSManagerException {
+        return configurationService.getConfigurationByUser(userId);
     }
 }

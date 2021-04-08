@@ -9,9 +9,12 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
 import org.springframework.stereotype.Service;
 import ro.fujinuji.awsmanager.model.SendMessageRequest;
+import ro.fujinuji.awsmanager.model.User;
 import ro.fujinuji.awsmanager.model.exception.AWSManagerException;
 import ro.fujinuji.awsmanager.model.exception.MessageNotSentException;
 import ro.fujinuji.awsmanager.service.MessagingService;
+
+import java.util.Locale;
 
 @Service
 public class MessagingServiceImpl implements MessagingService {
@@ -21,14 +24,17 @@ public class MessagingServiceImpl implements MessagingService {
 
     static final String SUBJECT = "AWS Manager platform access";
 
-    static final String HTMLBODY = "<h1>Amazon SES test (AWS SDK for Java)</h1>"
-            + "<p>This email was sent with <a href='https://aws.amazon.com/ses/'>"
-            + "Amazon SES</a> using the <a href='https://aws.amazon.com/sdk-for-java/'>"
-            + "AWS SDK for Java</a>";
+    static final String HTMLBODY = "<h1>AWS manager Skill Platform access</h1>"
+            + "Hi %s"
+            + "<p>To edit your configurations for AWS manager Alexa Skill please go to this link "
+            + "<a href='http://aws-manager-frontend.s3-website.eu-central-1.amazonaws.com/?userId= "
+            + "%s'> here </a>";
 
     @Override
-    public void sendMessage(SendMessageRequest messageRequest) throws AWSManagerException {
+    public void sendMessage(SendMessageRequest messageRequest, User user) throws AWSManagerException {
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials("AKIA4B3KZOHADVVMNQLR", "cIM0+PMrMVD445i5w/Pi9ky0+0M1KFrIqbHvX5qd\n"));
+
+        String messageToSend = String.format(Locale.getDefault(), HTMLBODY, user.getUserName(), user.getInternalUserId());
 
         try {
             AmazonSimpleEmailService client =
@@ -41,7 +47,7 @@ public class MessagingServiceImpl implements MessagingService {
                     .withMessage(new Message()
                             .withBody(new Body()
                                     .withHtml(new Content()
-                                            .withCharset("UTF-8").withData(HTMLBODY)))
+                                            .withCharset("UTF-8").withData(messageToSend)))
                             .withSubject(new Content()
                                     .withCharset("UTF-8").withData(SUBJECT)))
                     .withSource(FROM);

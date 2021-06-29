@@ -25,4 +25,9 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String userEmail) throws AWSManagerException {
         return userRepository.getUserByUserEmail(userEmail).orElseThrow(UserNotFoundException::new);
     }
+
+    @Override
+    public User getUserById(String userId) throws AWSManagerException {
+        return userRepository.getUserByAmazonUserId(userId).orElseThrow(UserNotFoundException::new);
+    }
 }

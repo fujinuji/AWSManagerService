@@ -10,6 +10,7 @@ public class ConfigurationConverter {
         UserIamConfiguration userIamConfiguration = new UserIamConfiguration();
         userIamConfiguration.setIamKeyId(createIamConfigurationRequest.getIamKeyId());
         userIamConfiguration.setIamSecretKey(createIamConfigurationRequest.getIamSecretKey());
+        userIamConfiguration.setRegion(createIamConfigurationRequest.getRegion());
 
         User user = new User();
         user.setInternalUserId(createIamConfigurationRequest.getUserId());

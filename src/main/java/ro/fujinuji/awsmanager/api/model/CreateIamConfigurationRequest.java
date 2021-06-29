@@ -9,4 +9,5 @@ public class CreateIamConfigurationRequest {
     private String userId;
     private String iamKeyId;
     private String iamSecretKey;
+    private String region;
 }

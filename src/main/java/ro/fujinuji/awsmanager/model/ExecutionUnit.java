@@ -7,12 +7,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 @Getter
 @Setter
-@Entity(name = "iam_configuration")
-public class UserIamConfiguration {
+@Entity(name = "execution_unit")
+public class ExecutionUnit {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -20,12 +20,9 @@ public class UserIamConfiguration {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    private String configurationId;
-    private String iamKeyId;
-    private String iamSecretKey;
-    private String region;
+    private String executionUnitId;
+    private String command;
 
-    @OneToOne
-    private User user;
-
+    @ManyToOne
+    private Executor executor;
 }

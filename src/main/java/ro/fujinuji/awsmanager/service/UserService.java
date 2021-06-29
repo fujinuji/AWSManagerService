@@ -7,4 +7,6 @@ public interface UserService {
     void saveUser(User user);
 
     User getUserByEmail(String userEmail) throws AWSManagerException;
+
+    User getUserById(String userId) throws AWSManagerException;
 }

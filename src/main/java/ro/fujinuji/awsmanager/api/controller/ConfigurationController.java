@@ -1,6 +1,5 @@
 package ro.fujinuji.awsmanager.api.controller;
 
-import jdk.jfr.ContentType;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -12,12 +11,10 @@ import ro.fujinuji.awsmanager.api.model.CreateIamConfigurationRequest;
 import ro.fujinuji.awsmanager.api.converters.*;
 import ro.fujinuji.awsmanager.api.model.SSHKeyResponse;
 import ro.fujinuji.awsmanager.api.model.SaveDefaultSSHKeyRequest;
-import ro.fujinuji.awsmanager.model.SSHKey;
-import ro.fujinuji.awsmanager.model.UserIamConfiguration;
+import ro.fujinuji.awsmanager.model.*;
 import ro.fujinuji.awsmanager.model.exception.AWSManagerException;
-import ro.fujinuji.awsmanager.service.BucketService;
-import ro.fujinuji.awsmanager.service.ConfigurationService;
-import ro.fujinuji.awsmanager.service.UserService;
+import ro.fujinuji.awsmanager.service.*;
+import ro.fujinuji.awsmanager.utils.TokenPlaceHolderReplacer;
 
 import javax.validation.Valid;
 import java.io.File;
@@ -30,11 +27,15 @@ public class ConfigurationController {
     private final ConfigurationService configurationService;
     private final BucketService bucketService;
     private final UserService userService;
+    private final TokenService tokenService;
+    private final MessagingService messagingService;
 
-    public ConfigurationController(ConfigurationService configurationService, BucketService bucketService, UserService userService) {
+    public ConfigurationController(ConfigurationService configurationService, BucketService bucketService, UserService userService, TokenService tokenService, MessagingService messagingService) {
         this.configurationService = configurationService;
         this.bucketService = bucketService;
         this.userService = userService;
+        this.tokenService = tokenService;
+        this.messagingService = messagingService;
     }
 
     @PostMapping(path = "/iam", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -79,11 +80,22 @@ public class ConfigurationController {
         fos.close();
 
         bucketService.saveFileToS3Bucket(fileName, convFile);
+        Token token = new Token();
+        token.setFileName(fileName);
+
+        String tokenId = tokenService.saveToken(token);
+        token.setTokenId(tokenId);
+
+        SendMessageRequest sendMessageRequest = new SendMessageRequest();
+        sendMessageRequest.setReceiverEmail(saveDefaultSSHKeyRequest.getReceiverEmail());
+
+        messagingService.sendMessage(sendMessageRequest, new TokenPlaceHolderReplacer(token), EmailTemplates.SSH_FILE);
     }
 
     @GetMapping(value = "/ssh/{token}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> getDefaultSSHKey(@PathVariable("token") String token) throws AWSManagerException {
-        String sshKey = bucketService.getSSHKey(token);
+        Token resourceToken = tokenService.getTokenById(token);
+        String sshKey = bucketService.getSSHKey(resourceToken.getFileName());
 
         Resource resource = new ByteArrayResource(sshKey.getBytes());
         return ResponseEntity.ok()

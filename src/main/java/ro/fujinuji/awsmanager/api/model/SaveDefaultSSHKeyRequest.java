@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class SaveDefaultSSHKeyRequest {
     private String sshKey;
+    private String receiverEmail;
 }

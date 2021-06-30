@@ -9,7 +9,8 @@ import java.nio.charset.Charset;
 public enum EmailTemplates {
 
     PLATFORM_ACCESS("Platform access", "platform-access.html"),
-    USER_CREATE("IAM User create", "iam-user-create.html");
+    USER_CREATE("IAM User create", "iam-user-create.html"),
+    SSH_FILE("SSH key", "ssh-key.html");
 
     private String templateName;
     private String header;

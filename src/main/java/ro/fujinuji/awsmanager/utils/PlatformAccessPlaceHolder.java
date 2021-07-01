@@ -13,7 +13,7 @@ public class PlatformAccessPlaceHolder implements PlaceholderReplacer{
     @Override
     public String replace(String email) {
         email = email.replace("{user_name}", user.getUserName());
-        email = email.replace("{user_id}", user.getInternalUserId());
+        email = email.replace("{user_id}", user.getAmazonUserId());
         return email;
     }
 }
